@@ -1,0 +1,28 @@
+Find suitable values for the unknown variables, and then pick the solution nearest to the reference point.
+
+p and q are prime numbers, p < q, and q < 100000
+
+an = (an-1 * p) mod q
+
+N (a1 mod 1000)°  ((a2 mod 1000) + (a3 mod 1000)/1000)'   E (a4 mod 1000)°  ((a5 mod 1000) + ((a6 - 10) mod 1000)/1000)'
+
+Reference point = N 60 16,450 E 24 56,280 
+
+
+14000 <= ((a2 mod 1000) + (a3 mod 1000)/1000) <= 19000
+
+0 <= ((a5 mod 1000) + ((a6 - 10) mod 1000)/1000) < 60000
+
+(a1 mod 1000) = 60
+(a4 mod 1000) = 24
+
+
+a1= 60
+a2= 
+a3= 
+a4= 24
+a5= 
+a6= 
+
+N = 60 
+E = 	

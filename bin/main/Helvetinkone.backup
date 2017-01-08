@@ -1,0 +1,165 @@
+package main;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Helvetinkone {
+
+    public static void main(String[] args) {
+
+        List<ResultObject> results = getCoordinates();
+
+        if (results.size() > 0) {
+            for (int i = 0; i < results.size(); i++) {
+                ResultObject resultObject = (ResultObject) results.get(i);
+                System.out.println(resultObject.N + "  " + resultObject.E + ",   p: " + resultObject.p + " q: " + resultObject.q + "\n");
+            }
+        } else {
+            System.out.println("EI TULOKSIA :-( \n");
+        }
+
+    }
+
+    private static List<ResultObject> getCoordinates() {
+        Integer a1 = null, a2 = null, a3 = null, a4 = null, a5 = null, a6 = null;
+        int northDegrees, northMins, northSecs, eastDegrees, eastMins, eastSecs;
+
+        List<ResultObject> results = new ArrayList<ResultObject>();
+
+        int multiplierMax = 100000, pAndQmax = 100000;
+
+        for (int pAndQstart = 1; pAndQstart < pAndQmax; pAndQstart++) {
+            PandQ pAndQ = getPandQ(pAndQstart);
+
+            for (int multiplierA1 = 0; multiplierA1 <= multiplierMax; multiplierA1++) {
+                a1 = (multiplierA1 * 1000) + 60;
+                // northDegrees = mod(a1, 1000, multiplierA1);
+                northDegrees = a1 % 1000;
+
+                if (northDegrees != 60) {
+                    break;
+                }
+
+                System.out.println("Suitable northDegrees founds");
+
+                for (int multiplierA2 = 0; multiplierA2 <= multiplierMax; multiplierA2++) {
+                    a2 = mod((a1 * pAndQ.p), pAndQ.q, multiplierA2);
+                    // northMins = mod(a2, 1000, multiplierA2);
+                    northMins = a2 % 1000;
+
+                    if (northMins < 14 || northMins > 19) {
+                        break;
+                    }
+
+                    System.out.println("Suitable northMins founds");
+
+                    for (int multiplierA3 = 0; multiplierA3 <= multiplierMax; multiplierA3++) {
+                        a3 = mod((a2 * pAndQ.p), pAndQ.q, multiplierA3);
+                        // northSecs = mod(a3, 1000, multiplierA3);
+                        northSecs = (a3 % 1000) / 1000;
+
+                        if (northSecs < 0) {
+                            break;
+                        }
+
+                        for (int multiplierA4 = 0; multiplierA4 <= multiplierMax; multiplierA4++) {
+                            a4 = mod((a3 * pAndQ.p), pAndQ.q, multiplierA4);
+                            // eastDegrees = mod(a4, 1000, multiplierA4);
+                            eastDegrees = a4 % 1000;
+
+                            if ((eastDegrees != 24) && (eastDegrees != 25)) {
+                                break;
+                            }
+
+                            System.out.println("Suitable eastDegrees founds");
+
+                            for (int multiplierA5 = 0; multiplierA5 <= multiplierMax; multiplierA5++) {
+                                a5 = mod((a4 * pAndQ.p), pAndQ.q, multiplierA5);
+                                // eastMins = mod(a5, 1000, multiplierA5);
+                                eastMins = a5 % 1000;
+
+                                if (eastMins < 0 || eastMins >= 60) {
+                                    break;
+                                }
+
+                                System.out.println("Suitable eastMins founds");
+
+                                for (int multiplierA6 = 0; multiplierA6 <= multiplierMax; multiplierA6++) {
+                                    a6 = mod((a5 * pAndQ.p), pAndQ.q, multiplierA6);
+                                    // eastSecs = mod((a6 - 10), 1000, multiplierA6);
+                                    eastSecs = ((a6 - 10) % 1000) / 1000;
+
+                                    if (eastSecs < 0) {
+                                        break;
+                                    }
+
+                                    System.out.println("Calculated coordinates: " + northDegrees + " " + northMins + "," + northSecs + " " + eastDegrees + " " + eastMins + "," + eastSecs + " p: "
+                                            + pAndQ.p + " q: " + pAndQ.q);
+
+                                    ResultObject resultObject = new ResultObject();
+                                    resultObject.N = northDegrees + " " + northMins + "," + northSecs;
+                                    resultObject.E = eastDegrees + "  " + eastMins + "," + eastSecs;
+                                    resultObject.p = pAndQ.p;
+                                    resultObject.q = pAndQ.q;
+
+                                    results.add(resultObject);
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return results;
+    }
+
+    private static int mod(int modulo, int divider, int multiplier) {
+        return (divider * multiplier) + modulo;
+    };
+
+    private static PandQ getPandQ(int start) {
+        int varP = getNextPrime(start), varQ = getNextPrime(varP + 1);
+
+        PandQ qAndP = new PandQ();
+        qAndP.p = varP;
+        qAndP.q = varQ;
+
+        return qAndP;
+    };
+
+    private static int getNextPrime(int start) {
+        for (int i = start; i < 100000; i++) {
+            if (isPrime(i)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static boolean isPrime(int num) {
+        if (num < 3) {
+            return false;
+        }
+
+        boolean prime = true;
+        for (int i = 2; i < num; i++) {
+            prime = prime && (num % i != 0);
+        }
+
+        return prime;
+    }
+
+    static class ResultObject {
+        String N;
+        String E;
+        int p;
+        int q;
+    }
+
+    static class PandQ {
+        int p;
+        int q;
+    }
+}
